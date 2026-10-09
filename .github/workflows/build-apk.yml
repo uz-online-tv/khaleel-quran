@@ -26,3 +26,5 @@ jobs:
           app_id: "com.uzonlinetv.khaleelquran"
           web_dir: "."
           build_command: ""
+- name: Change directory
+  run: cd khaleel-quran
