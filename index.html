@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ha">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Khaleel Quran</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f8f2;
+  color: #173d2b;
+  text-align: center;
+}
+header {
+  background: #075b3b;
+  color: white;
+  padding: 28px 12px;
+}
+h1 { margin: 0; }
+main { padding: 20px; }
+button {
+  background: #087747;
+  color: white;
+  border: 0;
+  padding: 14px;
+  margin: 6px;
+  border-radius: 9px;
+  font-size: 16px;
+}
+select {
+  padding: 12px;
+  width: 90%;
+  border-radius: 8px;
+  font-size: 16px;
+}
+#message {
+  background: white;
+  padding: 18px;
+  border-radius: 12px;
+  margin-top: 20px;
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>📖 Khaleel Quran</h1>
+  <p>Alƙur’ani Mai Girma</p>
+</header>
+<main>
+  <h2>Zaɓi Sura</h2>
+  <select id="surah"></select>
+  <div id="message">
+    <p>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+    <p>Maraba da Khaleel Quran</p>
+  </div>
+  <button onclick="save()">Ajiye Wurin Karatu</button>
+  <p id="saved"></p>
+</main>
+<script>
+const names = [
+"Al-Fatiha","Al-Baqara","Ali Imran","An-Nisa","Al-Maida",
+"Al-Anam","Al-Araf","Al-Anfal","At-Tawba","Yunus",
+"Hud","Yusuf","Ar-Rad","Ibrahim","Al-Hijr",
+"An-Nahl","Al-Isra","Al-Kahf","Maryam","Ta-Ha",
+"Al-Anbiya","Al-Hajj","Al-Muminun","An-Nur","Al-Furqan",
+"Ash-Shuara","An-Naml","Al-Qasas","Al-Ankabut","Ar-Rum",
+"Luqman","As-Sajda","Al-Ahzab","Saba","Fatir",
+"Ya-Sin","As-Saffat","Sad","Az-Zumar","Ghafir",
+"Fussilat","Ash-Shura","Az-Zukhruf","Ad-Dukhan","Al-Jathiya",
+"Al-Ahqaf","Muhammad","Al-Fath","Al-Hujurat","Qaf",
+"Adh-Dhariyat","At-Tur","An-Najm","Al-Qamar","Ar-Rahman",
+"Al-Waqia","Al-Hadid","Al-Mujadila","Al-Hashr","Al-Mumtahana",
+"As-Saff","Al-Jumua","Al-Munafiqun","At-Taghabun","At-Talaq",
+"At-Tahrim","Al-Mulk","Al-Qalam","Al-Haqqa","Al-Maarij",
+"Nuh","Al-Jinn","Al-Muzzammil","Al-Muddaththir","Al-Qiyama",
+"Al-Insan","Al-Mursalat","An-Naba","An-Naziat","Abasa",
+"At-Takwir","Al-Infitar","Al-Mutaffifin","Al-Inshiqaq","Al-Buruj",
+"At-Tariq","Al-Ala","Al-Ghashiya","Al-Fajr","Al-Balad",
+"Ash-Shams","Al-Lail","Ad-Duha","Ash-Sharh","At-Tin",
+"Al-Alaq","Al-Qadr","Al-Bayyina","Az-Zalzala","Al-Adiyat",
+"Al-Qaria","At-Takathur","Al-Asr","Al-Humaza","Al-Fil",
+"Quraysh","Al-Maun","Al-Kawthar","Al-Kafirun","An-Nasr",
+"Al-Masad","Al-Ikhlas","Al-Falaq","An-Nas"
+];
+const sel = document.getElementById("surah");
+names.forEach((name, i) => {
+  const option = document.createElement("option");
+  option.value = i + 1;
+  option.textContent = (i + 1) + ". " + name;
+  sel.appendChild(option);
+});
+function save() {
+  localStorage.setItem("khaleelSurah", sel.value);
+  document.getElementById("saved").textContent =
+    "An ajiye sura ta " + sel.value;
+}
+sel.value = localStorage.getItem("khaleelSurah") || "1";
+</script>
+</body>
+</html>
