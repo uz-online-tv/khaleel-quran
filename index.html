@@ -1,101 +1,168 @@
+
 <!DOCTYPE html>
 <html lang="ha">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#075b3b">
 <title>Khaleel Quran</title>
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f8f2;
-  color: #173d2b;
-  text-align: center;
-}
-header {
-  background: #075b3b;
-  color: white;
-  padding: 28px 12px;
-}
-h1 { margin: 0; }
-main { padding: 20px; }
-button {
-  background: #087747;
-  color: white;
-  border: 0;
-  padding: 14px;
-  margin: 6px;
-  border-radius: 9px;
-  font-size: 16px;
-}
-select {
-  padding: 12px;
-  width: 90%;
-  border-radius: 8px;
-  font-size: 16px;
-}
-#message {
-  background: white;
-  padding: 18px;
-  border-radius: 12px;
-  margin-top: 20px;
-}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f8f2;color:#173d2b}
+header{background:#075b3b;color:white;padding:22px 12px;text-align:center}
+header h1{margin:0;font-size:27px}
+header p{margin:8px 0 0}
+main{max-width:760px;margin:auto;padding:16px}
+label{display:block;font-weight:bold;margin:12px 0 7px}
+select,button{width:100%;padding:13px;border-radius:9px;font-size:16px}
+select{border:1px solid #b8cbbd;background:white}
+button{border:0;background:#087447;color:white;margin-top:10px}
+button:active{opacity:.8}
+#status{text-align:center;margin:16px 0;color:#53685b}
+.surah-title{text-align:center;background:#e1eee4;border-radius:12px;padding:16px;margin-top:18px}
+.ayah{background:white;border-radius:12px;padding:16px;margin:12px 0;box-shadow:0 2px 7px #0000000c}
+.arabic{font-family:"Times New Roman",serif;font-size:27px;line-height:2.1;text-align:right;direction:rtl;color:#163c2b}
+.number{display:inline-block;background:#e0eee3;border-radius:50%;padding:5px 10px;margin-top:10px}
+.small{text-align:center;font-size:12px;color:#617267;margin:24px 0}
+a{color:#075b3b}
 </style>
 </head>
 <body>
 <header>
-  <h1>📖 Khaleel Quran</h1>
-  <p>Alƙur’ani Mai Girma</p>
+<h1>📖 Khaleel Quran</h1>
+<p>Alƙur’ani Mai Girma — القرآن الكريم</p>
 </header>
+
 <main>
-  <h2>Zaɓi Sura</h2>
-  <select id="surah"></select>
-  <div id="message">
-    <p>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
-    <p>Maraba da Khaleel Quran</p>
-  </div>
-  <button onclick="save()">Ajiye Wurin Karatu</button>
-  <p id="saved"></p>
+<label for="surah">Zaɓi sura / Choose Surah</label>
+<select id="surah"></select>
+<button id="load">Buɗe Sura</button>
+<button id="bookmark" style="background:#b28a35">Ajiye wurin karatu</button>
+<button id="resume" style="background:#426b87">Ci gaba daga inda na tsaya</button>
+<div id="status">Ana shirya surori 114...</div>
+<div id="content"></div>
+<p class="small">
+Rubutun Alƙur’ani: Quran JSON / Tanzil source.
+<a href="https://tanzil.net" target="_blank" rel="noopener">Tanzil.net</a>
+</p>
 </main>
+
 <script>
 const names = [
-"Al-Fatiha","Al-Baqara","Ali Imran","An-Nisa","Al-Maida",
-"Al-Anam","Al-Araf","Al-Anfal","At-Tawba","Yunus",
+"Al-Fatihah","Al-Baqarah","Ali Imran","An-Nisa","Al-Maidah",
+"Al-Anam","Al-Araf","Al-Anfal","At-Tawbah","Yunus",
 "Hud","Yusuf","Ar-Rad","Ibrahim","Al-Hijr",
 "An-Nahl","Al-Isra","Al-Kahf","Maryam","Ta-Ha",
 "Al-Anbiya","Al-Hajj","Al-Muminun","An-Nur","Al-Furqan",
 "Ash-Shuara","An-Naml","Al-Qasas","Al-Ankabut","Ar-Rum",
-"Luqman","As-Sajda","Al-Ahzab","Saba","Fatir",
+"Luqman","As-Sajdah","Al-Ahzab","Saba","Fatir",
 "Ya-Sin","As-Saffat","Sad","Az-Zumar","Ghafir",
-"Fussilat","Ash-Shura","Az-Zukhruf","Ad-Dukhan","Al-Jathiya",
+"Fussilat","Ash-Shura","Az-Zukhruf","Ad-Dukhan","Al-Jathiyah",
 "Al-Ahqaf","Muhammad","Al-Fath","Al-Hujurat","Qaf",
 "Adh-Dhariyat","At-Tur","An-Najm","Al-Qamar","Ar-Rahman",
-"Al-Waqia","Al-Hadid","Al-Mujadila","Al-Hashr","Al-Mumtahana",
-"As-Saff","Al-Jumua","Al-Munafiqun","At-Taghabun","At-Talaq",
-"At-Tahrim","Al-Mulk","Al-Qalam","Al-Haqqa","Al-Maarij",
-"Nuh","Al-Jinn","Al-Muzzammil","Al-Muddaththir","Al-Qiyama",
+"Al-Waqiah","Al-Hadid","Al-Mujadilah","Al-Hashr","Al-Mumtahanah",
+"As-Saff","Al-Jumuah","Al-Munafiqun","At-Taghabun","At-Talaq",
+"At-Tahrim","Al-Mulk","Al-Qalam","Al-Haqqah","Al-Maarij",
+"Nuh","Al-Jinn","Al-Muzzammil","Al-Muddaththir","Al-Qiyamah",
 "Al-Insan","Al-Mursalat","An-Naba","An-Naziat","Abasa",
 "At-Takwir","Al-Infitar","Al-Mutaffifin","Al-Inshiqaq","Al-Buruj",
-"At-Tariq","Al-Ala","Al-Ghashiya","Al-Fajr","Al-Balad",
-"Ash-Shams","Al-Lail","Ad-Duha","Ash-Sharh","At-Tin",
-"Al-Alaq","Al-Qadr","Al-Bayyina","Az-Zalzala","Al-Adiyat",
-"Al-Qaria","At-Takathur","Al-Asr","Al-Humaza","Al-Fil",
+"At-Tariq","Al-Ala","Al-Ghashiyah","Al-Fajr","Al-Balad",
+"Ash-Shams","Al-Layl","Ad-Duha","Ash-Sharh","At-Tin",
+"Al-Alaq","Al-Qadr","Al-Bayyinah","Az-Zalzalah","Al-Adiyat",
+"Al-Qariah","At-Takathur","Al-Asr","Al-Humazah","Al-Fil",
 "Quraysh","Al-Maun","Al-Kawthar","Al-Kafirun","An-Nasr",
 "Al-Masad","Al-Ikhlas","Al-Falaq","An-Nas"
 ];
-const sel = document.getElementById("surah");
-names.forEach((name, i) => {
+
+const select = document.getElementById("surah");
+const statusBox = document.getElementById("status");
+const content = document.getElementById("content");
+let currentSurah = 1;
+
+names.forEach((name, index) => {
   const option = document.createElement("option");
-  option.value = i + 1;
-  option.textContent = (i + 1) + ". " + name;
-  sel.appendChild(option);
+  option.value = index + 1;
+  option.textContent = (index + 1) + ". " + name;
+  select.appendChild(option);
 });
-function save() {
-  localStorage.setItem("khaleelSurah", sel.value);
-  document.getElementById("saved").textContent =
-    "An ajiye sura ta " + sel.value;
+
+async function loadSurah(number) {
+  currentSurah = Number(number);
+  select.value = currentSurah;
+  content.innerHTML = "";
+  statusBox.textContent = "Ana loda ayoyin sura ta " + currentSurah + "...";
+  document.getElementById("load").disabled = true;
+
+  try {
+    const response = await fetch(
+      "https://quran-json.risanb.com/text/uthmani/chapters/" +
+      currentSurah + ".json"
+    );
+    if (!response.ok) throw new Error("Ba a samu bayanan surar ba.");
+    const data = await response.json();
+
+    const title = document.createElement("div");
+    title.className = "surah-title";
+    const heading = document.createElement("h2");
+    heading.textContent = names[currentSurah - 1];
+    const subtitle = document.createElement("p");
+    subtitle.textContent = "Sura ta " + currentSurah;
+    title.append(heading, subtitle);
+    content.appendChild(title);
+
+    data.verses.forEach(verse => {
+      const box = document.createElement("div");
+      box.className = "ayah";
+
+      const arabic = document.createElement("div");
+      arabic.className = "arabic";
+      arabic.textContent = verse.text;
+
+      const number = document.createElement("span");
+      number.className = "number";
+      number.textContent = "﴿ " + verse.id + " ﴾";
+
+      box.append(arabic, number);
+      content.appendChild(box);
+    });
+
+    statusBox.textContent = "An nuna ayoyi " + data.verses.length +
+      " na surar " + names[currentSurah - 1] + ".";
+    localStorage.setItem("khaleelLastSurah", String(currentSurah));
+  } catch (error) {
+    statusBox.textContent =
+      "An kasa loda ayoyin. Ka duba intanet sannan ka sake gwadawa.";
+  } finally {
+    document.getElementById("load").disabled = false;
+  }
 }
-sel.value = localStorage.getItem("khaleelSurah") || "1";
+
+document.getElementById("load").addEventListener("click", () => {
+  loadSurah(select.value);
+});
+
+document.getElementById("bookmark").addEventListener("click", () => {
+  localStorage.setItem("khaleelBookmarkSurah", String(currentSurah));
+  const visible = content.querySelectorAll(".ayah");
+  let lastAyah = 1;
+  if (visible.length) {
+    lastAyah = Number(
+      visible[visible.length - 1].querySelector(".number").textContent
+        .replace(/[^\d]/g, "")
+    );
+  }
+  localStorage.setItem("khaleelBookmarkAyah", String(lastAyah));
+  statusBox.textContent = "An ajiye sura ta " + currentSurah +
+    ". Za ka iya ci gaba daga baya.";
+});
+
+document.getElementById("resume").addEventListener("click", () => {
+  const saved = Number(localStorage.getItem("khaleelBookmarkSurah")) ||
+    Number(localStorage.getItem("khaleelLastSurah")) || 1;
+  loadSurah(saved);
+});
+
+loadSurah(1);
 </script>
 </body>
 </html>
