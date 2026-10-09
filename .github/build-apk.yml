@@ -1,0 +1,28 @@
+
+name: Build Khaleel Quran APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'index.html'
+      - '.github/workflows/build-apk.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get project files
+        uses: actions/checkout@v4
+
+      - name: Build Android APK
+        uses: cemcoe/web-to-apk-action@v1
+        with:
+          app_name: "Khaleel Quran"
+          app_id: "com.uzonlinetv.khaleelquran"
+          web_dir: "."
+          build_command: ""
